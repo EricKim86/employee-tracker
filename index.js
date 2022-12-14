@@ -12,21 +12,25 @@ const db = mysql.createConnection(
     },
 );
 
-//  function intro(){ 
-//     console.log(` 
-//  ______     __    __     ______   __         ______     __  __     ______     ______    
-// /\  ___\   /\ "-./  \   /\  == \ /\ \       /\  __ \   /\ \_\ \   /\  ___\   /\  ___\   
-// \ \  __\   \ \ \-./\ \  \ \  _-/ \ \ \____  \ \ \/\ \  \ \____ \  \ \  __\   \ \  __\   
-//  \ \_____\  \ \_\ \ \_\  \ \_\    \ \_____\  \ \_____\  \/\_____\  \ \_____\  \ \_____\ 
-//   \/_____/   \/_/  \/_/   \/_/     \/_____/   \/_____/   \/_____/   \/_____/   \/_____/ 
-                                                                                                
-//  ______   ______     ______     ______     __  __     ______     ______                 
-// /\__  _\ /\  == \   /\  __ \   /\  ___\   /\ \/ /    /\  ___\   /\  == \                
-// \/_/\ \/ \ \  __<   \ \  __ \  \ \ \____  \ \  _"-.  \ \  __\   \ \  __<                
-//    \ \_\  \ \_\ \_\  \ \_\ \_\  \ \_____\  \ \_\ \_\  \ \_____\  \ \_\ \_\              
-//     \/_/   \/_/ /_/   \/_/\/_/   \/_____/   \/_/\/_/   \/_____/   \/_/ /_/ `)
-//  }
-
+function intro() {
+    console.log(`
+-------------------------------------------------------------------------------------    
+######## ##     ## ########  ##        #######  ##    ## ######## ######## 
+##       ###   ### ##     ## ##       ##     ##  ##  ##  ##       ##       
+##       #### #### ##     ## ##       ##     ##   ####   ##       ##       
+######   ## ### ## ########  ##       ##     ##    ##    ######   ######   
+##       ##     ## ##        ##       ##     ##    ##    ##       ##       
+##       ##     ## ##        ##       ##     ##    ##    ##       ##       
+######## ######### ## ###    ######## ######## ######## ######### ######## 
+   ##    ##     ##   ## ##   ##    ## ##   ##  ##       ##     ##          
+   ##    ##     ##  ##   ##  ##       ##  ##   ##       ##     ##          
+   ##    ########  ##     ## ##       #####    ######   ########           
+   ##    ##   ##   ######### ##       ##  ##   ##       ##   ##            
+   ##    ##    ##  ##     ## ##    ## ##   ##  ##       ##    ##           
+   ##    ##     ## ##     ##  ######  ##    ## ######## ##     ##   
+---------------------------------------------------------------------------------------
+`)
+}
 
 const promptSelection = () => {
     return inquirer.prompt([
@@ -46,12 +50,9 @@ const promptSelection = () => {
                     promptSelection();
                     break;
                 case "Add Employee":
-
-                    promptSelection();
+                    addEmployee();
                     break;
                 case "Update Employee Role":
-
-                    promptSelection();
                     break;
                 case "View All Roles":
                     db.query('SELECT * FROM role', function (err, results) {
@@ -60,17 +61,16 @@ const promptSelection = () => {
                     promptSelection();
                     break;
                 case "Add Role":
-
-                    promptSelection();
+                    addRole();
                     break;
                 case "View All Departments":
-
-                    promptSelection();
-                    break;
-                case "Add Department":
                     db.query('SELECT * FROM department', function (err, results) {
                         console.table(results);
                     });
+                    promptSelection();
+                    break;
+                case "Add Department":
+                    addDepartment();
                     promptSelection();
                     break;
                 case "Quit":
@@ -78,6 +78,71 @@ const promptSelection = () => {
             }
         });
 };
+
+const addDepartment = () => {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            message: `What is the name of the department?`,
+            name: 'departmentName',
+        },
+    ])
+        .then(response => {
+            console.log(response);
+            promptSelection();
+        })
+};
+
+const addRole = () => {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            message: `what is the name of the role?`,
+            name: 'roleName',
+        },
+        {
+            type: 'input',
+            message: `what is the salary of the role?`,
+            name: 'roleSalary',
+        },
+        {
+            type: 'list',
+            message: `What department does the role belong to`,
+            name: 'selection',
+            choices: ['Engineering', 'Finance', 'Legal', 'Sales', 'Service'],
+        },
+    ])
+        .then(response => {
+            console.log(response);
+            promptSelection();
+        })
+};
+
+const addEmployee = () => {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            message: `What is the employee's first name?`,
+            name: 'firstName',
+        },
+        {
+            type: 'input',
+            message: `What is the employee's last name?`,
+            name: 'lastName',
+        },
+        {
+            type: 'list',
+            message: `What is the employee's Role?`,
+            name: 'empRole',
+            choices: ['Sales Lead', 'Sales Person', 'Lead Engineering', 'Software Engineering', 'Account Manager', 'Accountant', 'Legal Team Lead', 'Layer', 'Customer Service'],
+        },
+    ])
+        .then(response => {
+            console.log(response);
+            promptSelection();
+        })
+};
+
 
 intro();
 promptSelection();
