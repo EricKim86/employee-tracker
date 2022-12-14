@@ -47,7 +47,7 @@ const promptSelection = () => {
         .then(choice => {
             switch (choice.selection) {
                 case "View All Employees":
-                    db.query('SELECT * FROM employee JOIN role ON employee.id = role_id', function (err, results) {
+                    db.query('SELECT employee.id, first_name, last_name, title, salary, manager_ID FROM employee JOIN role ON role.id = role_id', function (err, results) {
                         if (err) {
                             console.log(err);
                         } else {
@@ -55,6 +55,7 @@ const promptSelection = () => {
                         }
                     });
                     setTimeout(() => {
+                        console.log(`--------------------------------------------------------------`);
                         promptSelection();
                     }, 5);
                     break;
@@ -64,7 +65,7 @@ const promptSelection = () => {
                 case "Update Employee Role":
                     break;
                 case "View All Roles":
-                    db.query('SELECT * FROM role JOIN department ON department.id = department_id', function (err, results) {
+                    db.query('SELECT role.id, title, salary, name AS department FROM role JOIN department ON department.id = department_id', function (err, results) {
                         if (err) {
                             console.log(err);
                         } else {
@@ -72,6 +73,7 @@ const promptSelection = () => {
                         }
                     });
                     setTimeout(() => {
+                        console.log(`--------------------------------------------------------------`);
                         promptSelection();
                     }, 5);
                     break;
@@ -79,7 +81,7 @@ const promptSelection = () => {
                     addRole();
                     break;
                 case "View All Departments":
-                    db.query('SELECT * FROM department', function (err, results) {
+                    db.query('SELECT department.id, name AS department FROM department ', function (err, results) {
                         if (err) {
                             console.log(err);
                         } else {
@@ -87,16 +89,21 @@ const promptSelection = () => {
                         }
                     });
                     setTimeout(() => {
+                        console.log(`--------------------------------------------------------------`);
                         promptSelection();
                     }, 5);
                     break;
                 case "Add Department":
                     addDepartment();
                     setTimeout(() => {
+                        console.log(`--------------------------------------------------------------`);
                         promptSelection();
                     }, 5);
                     break;
                 case "Quit":
+                    console.log(`--------------------------------------------------------------`);
+                    console.log(`THANK YOU`);
+                    console.log(`--------------------------------------------------------------`);
                     break;
             }
         });
@@ -112,13 +119,15 @@ const addDepartment = () => {
         },
     ])
         .then(response => {
-            db.query(`INSERT INTO department (name) VALUES (?)`, 'hello', (err, result) => {
+            const departmentAnswer = response.departmentName;
+            db.query(`INSERT INTO department (name) VALUES (?)`, departmentAnswer, (err, result) => {
                 if (err) {
                     console.log(err);
                 }
-                console.log(result + ' has been added to DEPARTMENTS');
+                console.log(departmentAnswer + " has been added to DEPARTMENTS");
             });
             setTimeout(() => {
+                console.log(`--------------------------------------------------------------`);
                 promptSelection();
             }, 5);
         })
@@ -126,6 +135,7 @@ const addDepartment = () => {
 
 //add role prompts
 const addRole = () => {
+    const roleAnswerArray = [];
     return inquirer.prompt([
         {
             type: 'input',
@@ -141,15 +151,44 @@ const addRole = () => {
             type: 'list',
             message: `What department does the role belong to`,
             name: 'selection',
-            choices: ['Engineering', 'Finance', 'Legal', 'Sales', 'Service'],
+            choices: [
+                {
+                name:'Engineering',
+                value: 1,
+                },
+                {
+                name: 'Finance',
+                value: 2,
+                },
+                {
+                name: 'Legal',
+                value: 3,
+                },
+                {
+                name: 'Sales',
+                value: 4,
+                },
+                {
+                name: 'Service',
+                value: 5,
+                },
+            ],
         },
     ])
-        .then(response => {
-            console.log(response);
-            setTimeout(() => {
-                promptSelection();
-            }, 5);
-        })
+    .then(response => {
+        roleAnswerArray.push(response.roleName)
+        roleAnswerArray.push(JSON.parse(response.roleSalary))
+        roleAnswerArray.push(response.selection)
+        db.query(`INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`, roleAnswerArray, (err, result) => {
+            if (err) {
+                console.log(err);
+            }
+        });
+        setTimeout(() => {
+            console.log(`--------------------------------------------------------------`);
+            promptSelection();
+        }, 5);
+    })
 };
 
 
@@ -176,6 +215,7 @@ const addEmployee = () => {
         .then(response => {
             console.log(response);
             setTimeout(() => {
+                console.log(`-------------------------------------`);
                 promptSelection();
             }, 5);
         })
