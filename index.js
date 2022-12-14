@@ -12,6 +12,8 @@ const db = mysql.createConnection(
     },
 );
 
+//ascii art prompted once at the start of the application
+
 function intro() {
     console.log(`
 -------------------------------------------------------------------------------------    
@@ -32,6 +34,7 @@ function intro() {
 `)
 }
 
+//main selection menu prompt
 const promptSelection = () => {
     return inquirer.prompt([
         {
@@ -44,10 +47,16 @@ const promptSelection = () => {
         .then(choice => {
             switch (choice.selection) {
                 case "View All Employees":
-                    db.query('SELECT * FROM employee', function (err, results) {
-                        console.table(results);
+                    db.query('SELECT * FROM employee JOIN role ON employee.id = role_id', function (err, results) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.table(results);
+                        }
                     });
-                    promptSelection();
+                    setTimeout(() => {
+                        promptSelection();
+                    }, 5);
                     break;
                 case "Add Employee":
                     addEmployee();
@@ -55,23 +64,37 @@ const promptSelection = () => {
                 case "Update Employee Role":
                     break;
                 case "View All Roles":
-                    db.query('SELECT * FROM role', function (err, results) {
-                        console.table(results);
+                    db.query('SELECT * FROM role JOIN department ON department.id = department_id', function (err, results) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.table(results);
+                        }
                     });
-                    promptSelection();
+                    setTimeout(() => {
+                        promptSelection();
+                    }, 5);
                     break;
                 case "Add Role":
                     addRole();
                     break;
                 case "View All Departments":
                     db.query('SELECT * FROM department', function (err, results) {
-                        console.table(results);
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.table(results);
+                        }
                     });
-                    promptSelection();
+                    setTimeout(() => {
+                        promptSelection();
+                    }, 5);
                     break;
                 case "Add Department":
                     addDepartment();
-                    promptSelection();
+                    setTimeout(() => {
+                        promptSelection();
+                    }, 5);
                     break;
                 case "Quit":
                     break;
@@ -79,6 +102,7 @@ const promptSelection = () => {
         });
 };
 
+//add department prompts
 const addDepartment = () => {
     return inquirer.prompt([
         {
@@ -88,11 +112,19 @@ const addDepartment = () => {
         },
     ])
         .then(response => {
-            console.log(response);
-            promptSelection();
+            db.query(`INSERT INTO department (name) VALUES (?)`, 'hello', (err, result) => {
+                if (err) {
+                    console.log(err);
+                }
+                console.log(result + ' has been added to DEPARTMENTS');
+            });
+            setTimeout(() => {
+                promptSelection();
+            }, 5);
         })
 };
 
+//add role prompts
 const addRole = () => {
     return inquirer.prompt([
         {
@@ -114,10 +146,14 @@ const addRole = () => {
     ])
         .then(response => {
             console.log(response);
-            promptSelection();
+            setTimeout(() => {
+                promptSelection();
+            }, 5);
         })
 };
 
+
+//add employee prompts
 const addEmployee = () => {
     return inquirer.prompt([
         {
@@ -139,10 +175,12 @@ const addEmployee = () => {
     ])
         .then(response => {
             console.log(response);
-            promptSelection();
+            setTimeout(() => {
+                promptSelection();
+            }, 5);
         })
 };
 
-
+//starting functions
 intro();
 promptSelection();
