@@ -64,6 +64,7 @@ function promptSelection() {
                     addEmployee();
                     break;
                 case "Update Employee Role":
+                    updateEmployee();
                     break;
                 case "View All Roles":
                     db.query('SELECT role.id AS ID, title AS Title, name AS Department, salary AS Salary FROM role JOIN department ON department.id = department_id', function (err, results) {
@@ -107,6 +108,53 @@ function promptSelection() {
             }
         });
 };
+
+//update employee's role
+function updateEmployee() {
+    db.query('SELECT * FROM employee', (err, results) => {
+        if (err) {
+            console.log(err);
+        }
+        return inquirer.prompt([
+            {
+                type: 'rawlist',
+                name: 'updEmp',
+                choices: function () {
+                    var choiceArr = []
+                    for (let i = 0; i < results.length; i++) {
+                        choiceArr.push(results[i].last_name)
+                    }
+                    return choiceArr;
+                },
+                message: "Which employee's role do you want to update?"
+            },
+            {
+                type: 'input',
+                message:
+                    `Which role do you want to assign the selected employee?`,
+                name: 'updRole',
+            },
+    ])
+        .then(response => {
+            const updRole = response.updRole;
+            const updEmp = response.updEmp;
+            db.query(`UPDATE employee SET role_id = updRole WHERE last_name = updEmp`, (err, result) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+            setTimeout(() => {
+                console.clear();
+                console.log(`--------------------------------------------------------------`);
+                console.log(`Response has been added to department`);
+                console.log(`--------------------------------------------------------------`);
+                promptSelection();
+            }, 5);
+        })
+});
+}
+
+
 
 //add department prompts
 function addDepartment() {
@@ -157,7 +205,6 @@ function addRole() {
                 choices: function () {
                     var choiceArr = []
                     for (let i = 0; i < results.length; i++) {
-                        console.log(results[i].name);
                         choiceArr.push(results[i].name)
                     }
                     return choiceArr;
@@ -169,14 +216,16 @@ function addRole() {
                 roleAnswerArray = []
                 roleAnswerArray.push(response.roleName)
                 roleAnswerArray.push(JSON.parse(response.roleSalary))
-                roleAnswerArray.push(1)
+                const deptID = response.department;
+                roleAnswerArray.push(results.map(department = deptID.id));
+                console.log(roleAnswerArray);
                 db.query(`INSERT INTO role (title, salary, department_ID) VALUES (?,?,?)`, roleAnswerArray, (err, result) => {
                     if (err) {
                         console.log(err);
                     }
                 });
                 setTimeout(() => {
-                    console.clear();
+                    // console.clear();
                     console.log(`--------------------------------------------------------------`);
                     console.log(response.roleName + ` has been added to role`);
                     console.log(`--------------------------------------------------------------`);
