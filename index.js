@@ -1,6 +1,8 @@
+//require
 const inquirer = require("inquirer");
 const mysql = require('mysql2');
 const cTable = require('console.table');
+const chalk = require('chalk');
 
 // Connect to database
 const db = mysql.createConnection(
@@ -13,25 +15,26 @@ const db = mysql.createConnection(
 );
 
 //ascii art prompted once at the start of the application
-
 function intro() {
-    console.log(`
--------------------------------------------------------------------------------------    
-######## ##     ## ########  ##        #######  ##    ## ######## ######## 
-##       ###   ### ##     ## ##       ##     ##  ##  ##  ##       ##       
-##       #### #### ##     ## ##       ##     ##   ####   ##       ##       
-######   ## ### ## ########  ##       ##     ##    ##    ######   ######   
-##       ##     ## ##        ##       ##     ##    ##    ##       ##       
-##       ##     ## ##        ##       ##     ##    ##    ##       ##       
-######## ######### ## ###    ######## ######## ######## ######### ######## 
-   ##    ##     ##   ## ##   ##    ## ##   ##  ##       ##     ##          
-   ##    ##     ##  ##   ##  ##       ##  ##   ##       ##     ##          
-   ##    ########  ##     ## ##       #####    ######   ########           
-   ##    ##   ##   ######### ##       ##  ##   ##       ##   ##            
-   ##    ##    ##  ##     ## ##    ## ##   ##  ##       ##    ##           
-   ##    ##     ## ##     ##  ######  ##    ## ######## ##     ##   
----------------------------------------------------------------------------------------
-`)
+    console.log(chalk.cyan(`
+------------------------------------------------------------------------------------  
+    ######## ##     ## ########  ##        #######  ##    ## ######## ######## 
+    ##       ###   ### ##     ## ##       ##     ##  ##  ##  ##       ##       
+    ##       #### #### ##     ## ##       ##     ##   ####   ##       ##       
+    ######   ## ### ## ########  ##       ##     ##    ##    ######   ######   
+    ##       ##     ## ##        ##       ##     ##    ##    ##       ##       
+    ##       ##     ## ##        ##       ##     ##    ##    ##       ##       
+    ######## ######### ## ###    ######## ######## ######## ######### ######## 
+       ##    ##     ##   ## ##   ##    ## ##   ##  ##       ##     ##          
+       ##    ##     ##  ##   ##  ##       ##  ##   ##       ##     ##          
+       ##    ########  ##     ## ##       #####    ######   ########           
+       ##    ##   ##   ######### ##       ##  ##   ##       ##   ##            
+       ##    ##    ##  ##     ## ##    ## ##   ##  ##       ##    ##           
+       ##    ##     ## ##     ##  ######  ##    ## ######## ##     ##   
+------------------------------------------------------------------------------------       
+---------------------------'https://github.com/EricKim86'---------------------------
+------------------------------------------------------------------------------------
+`))
 }
 
 //main selection menu prompt
@@ -60,12 +63,18 @@ function promptSelection() {
                         promptSelection();
                     }, 5);
                     break;
+
+                //add employee selection
                 case "Add Employee":
                     addEmployee();
                     break;
+
+                //update employee selection
                 case "Update Employee Role":
                     updateEmployee();
                     break;
+
+                //view role selection
                 case "View All Roles":
                     db.query('SELECT role.id AS ID, title AS Title, name AS Department, salary AS Salary FROM role JOIN department ON department.id = department_id', function (err, results) {
                         if (err) {
@@ -80,9 +89,13 @@ function promptSelection() {
                         promptSelection();
                     }, 5);
                     break;
+
+                //add role selection
                 case "Add Role":
                     addRole();
                     break;
+
+                //view department selection    
                 case "View All Departments":
                     db.query('SELECT department.id AS ID, name AS Department FROM department ', function (err, results) {
                         if (err) {
@@ -97,13 +110,29 @@ function promptSelection() {
                         promptSelection();
                     }, 5);
                     break;
+
+                //add department selection
                 case "Add Department":
                     addDepartment();
                     break;
+
+                //quit selection
                 case "Quit":
-                    console.log(`--------------------------------------------------------------`);
-                    console.log(`THANK YOU`);
-                    console.log(`--------------------------------------------------------------`);
+                    console.log(chalk.green(`
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+######## ##     ##    ###    ##    ## ##    ##    ##    ##  #######  ##     ## #### 
+   ##    ##     ##   ## ##   ###   ## ##   ##      ##  ##  ##     ## ##     ## #### 
+   ##    ##     ##  ##   ##  ####  ## ##  ##        ####   ##     ## ##     ## #### 
+   ##    ######### ##     ## ## ## ## #####          ##    ##     ## ##     ##  ##  
+   ##    ##     ## ######### ##  #### ##  ##         ##    ##     ## ##     ##      
+   ##    ##     ## ##     ## ##   ### ##   ##        ##    ##     ## ##     ## #### 
+   ##    ##     ## ##     ## ##    ## ##    ##       ##     #######   #######  ####
+-----------------------------------------------------------------------------------
+---------------------------------Have a Great Day----------------------------------
+-----------------------------------------------------------------------------------
+   `));
+
                     break;
             }
         });
@@ -134,27 +163,25 @@ function updateEmployee() {
                     `Which role do you want to assign the selected employee?`,
                 name: 'updRole',
             },
-    ])
-        .then(response => {
-            const updRole = response.updRole;
-            const updEmp = response.updEmp;
-            db.query(`UPDATE employee SET role_id = updRole WHERE last_name = updEmp`, (err, result) => {
-                if (err) {
-                    console.log(err);
-                }
-            });
-            setTimeout(() => {
-                console.clear();
-                console.log(`--------------------------------------------------------------`);
-                console.log(`Response has been added to department`);
-                console.log(`--------------------------------------------------------------`);
-                promptSelection();
-            }, 5);
-        })
-});
+        ])
+            .then(response => {
+                const updRole = response.updRole;
+                const updEmp = response.updEmp;
+                db.query(`UPDATE employee SET role_id = updRole WHERE last_name = updEmp`, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+                setTimeout(() => {
+                    console.clear();
+                    console.log(`--------------------------------------------------------------`);
+                    console.log(`Response has been added to department`);
+                    console.log(`--------------------------------------------------------------`);
+                    promptSelection();
+                }, 5);
+            })
+    });
 }
-
-
 
 //add department prompts
 function addDepartment() {
@@ -217,15 +244,14 @@ function addRole() {
                 roleAnswerArray.push(response.roleName)
                 roleAnswerArray.push(JSON.parse(response.roleSalary))
                 const deptID = response.department;
-                roleAnswerArray.push(results.map(department = deptID.id));
-                console.log(roleAnswerArray);
+                roleAnswerArray.push(1)
                 db.query(`INSERT INTO role (title, salary, department_ID) VALUES (?,?,?)`, roleAnswerArray, (err, result) => {
                     if (err) {
                         console.log(err);
                     }
                 });
                 setTimeout(() => {
-                    // console.clear();
+                    console.clear();
                     console.log(`--------------------------------------------------------------`);
                     console.log(response.roleName + ` has been added to role`);
                     console.log(`--------------------------------------------------------------`);
@@ -234,7 +260,6 @@ function addRole() {
             })
     });
 }
-
 
 //add employee prompts
 function addEmployee() {
