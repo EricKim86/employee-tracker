@@ -47,19 +47,16 @@ function promptSelection() {
         .then(choice => {
             switch (choice.selection) {
                 case "View All Employees":
-                    db.query(`SELECT employee.id, first_name, last_name, title, salary, name AS department, mgrName AS manager FROM employee 
-                    JOIN role ON role.id = role_id 
-                    JOIN department ON department.id = department_id
-                    JOIN manager ON manager.id = manager_id`, function (err, results) {
+                    db.query('SELECT employee.id AS ID, first_name AS `First Name`, last_name AS `Last Name`, title AS Title, salary As Salary, name AS Department, mgrName AS Manager FROM employee JOIN role ON role.id = role_id JOIN department ON department.id = department_id JOIN manager ON manager.id = manager_id', function (err, results) {
                         if (err) {
                             console.log(err);
                         } else {
-                            console.log(`\n--------------------------------------------------------------`);
+                            console.log(`\n---------------------------------------------------------------------------`);
                             console.table(results);
                         }
                     });
                     setTimeout(() => {
-                        console.log(`--------------------------------------------------------------`);
+                        console.log(`--------------------------------------------------------------------------`);
                         promptSelection();
                     }, 5);
                     break;
@@ -69,16 +66,16 @@ function promptSelection() {
                 case "Update Employee Role":
                     break;
                 case "View All Roles":
-                    db.query('SELECT role.id, title, name AS department, salary FROM role JOIN department ON department.id = department_id', function (err, results) {
+                    db.query('SELECT role.id AS ID, title AS Title, name AS Department, salary AS Salary FROM role JOIN department ON department.id = department_id', function (err, results) {
                         if (err) {
                             console.log(err);
                         } else {
-                            console.log(`--------------------------------------------------------------`);
+                            console.log(`-------------------------------------------`);
                             console.table(results);
                         }
                     });
                     setTimeout(() => {
-                        console.log(`\n--------------------------------------------------------------`);
+                        console.log(`-------------------------------------------`);
                         promptSelection();
                     }, 5);
                     break;
@@ -86,16 +83,16 @@ function promptSelection() {
                     addRole();
                     break;
                 case "View All Departments":
-                    db.query('SELECT department.id, name AS department FROM department ', function (err, results) {
+                    db.query('SELECT department.id AS ID, name AS Department FROM department ', function (err, results) {
                         if (err) {
                             console.log(err);
                         } else {
-                            console.log(`--------------------------------------------------------------`);
+                            console.log(`-------------------------------------------`);
                             console.table(results);
                         }
                     });
                     setTimeout(() => {
-                        console.log(`\n--------------------------------------------------------------`);
+                        console.log(`\n-------------------------------------------`);
                         promptSelection();
                     }, 5);
                     break;
@@ -110,7 +107,6 @@ function promptSelection() {
             }
         });
 };
-
 
 //add department prompts
 function addDepartment() {
@@ -161,6 +157,7 @@ function addRole() {
                 choices: function () {
                     var choiceArr = []
                     for (let i = 0; i < results.length; i++) {
+                        console.log(results[i].name);
                         choiceArr.push(results[i].name)
                     }
                     return choiceArr;
