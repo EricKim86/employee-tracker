@@ -220,9 +220,9 @@ function addDepartment() {
             });
             setTimeout(() => {
                 console.clear();
-                console.log(`--------------------------------------------------------------`);
-                console.log(`            Response has been added to department             `);
-                console.log(`--------------------------------------------------------------`);
+                console.log(chalk.cyan(`--------------------------------------------------------------`));
+                console.log(chalk.cyan(`            Response has been added to employee               `));
+                console.log(chalk.cyan(`--------------------------------------------------------------`));
                 promptSelection();
             }, 5);
         })
@@ -276,10 +276,10 @@ function addRole() {
                     }
                 });
                 setTimeout(() => {
-                    // console.clear();
-                    console.log(`--------------------------------------------------------------`);
-                    console.log(`              Response has been added to role                 `);
-                    console.log(`--------------------------------------------------------------`);
+                    console.clear();
+                    console.log(chalk.cyan(`--------------------------------------------------------------`));
+                    console.log(chalk.cyan(`            Response has been added to employee               `));
+                    console.log(chalk.cyan(`--------------------------------------------------------------`));
                     promptSelection();
                 }, 5);
             })
@@ -351,9 +351,9 @@ function addEmployee() {
 
                 setTimeout(() => {
                     console.clear();
-                    console.log(`--------------------------------------------------------------`);
-                    console.log(`            Response has been added to employee               `);
-                    console.log(`--------------------------------------------------------------`);
+                    console.log(chalk.cyan(`--------------------------------------------------------------`));
+                    console.log(chalk.cyan(`            Response has been added to employee               `));
+                    console.log(chalk.cyan(`--------------------------------------------------------------`));
                     promptSelection();
                 }, 5);
             })
