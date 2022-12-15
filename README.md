@@ -22,7 +22,7 @@
   ## Usage
   GitHub Repository: https://github.com/EricKim86/employee-tracker <br/>
 
-  Deployed Site: <br/>
+  Video Walkthrough: https://youtu.be/nfq50ajTNIwhttps://youtu.be/nfq50ajTNIw<br/>
 
   Employee Tracker Main Menu: <br/>
 
